@@ -77,8 +77,18 @@ Go the extra mile and write
 */
 
 
-const inquirer=require('inquirer');
+/*Question
 
+Default value not displaying 
+How to use transform
+Validate ,description length not working with project description
+
+*/
+
+const inquirer=require('inquirer');
+const fs=require('fs');
+
+//NOTE: Transformer just display the 
 
 /* 
 
@@ -116,47 +126,101 @@ prompt(
         -What problem does it solve?
         -What did you learn?`,
         name:'projectDescription',
+        //Need to check/verify
+        //validate:(answer => answer.projectDescription.length==0?"Please enter the Project Description":true)
 
     },
     {
         type:'confirm',
-        message:"Do you want to add Table Of Contents ?",
+        message:"Do you want to add Table Of Contents to the READ ME?",
         name:'wantTableOfContent',
 
     },
-    {
-        //This will be displayed only if user selects Y for table of contents and provide checklist to choose the content
-        
+    //Seperator used to indicate  the first half as the suggested bare minimum for the Read Me
+    {   
         type:'checkbox',
-        message:"What are the content/heading that you need to add to table of contents",
+        message:"Choose the content/topics that you need add to the READ ME?",
         name:'contentList',
-        choices:['Installation','Usage','Credits','License'],
-        when:(answers)=> answers.wantTableOfContent===true   
+        default:'Screenshots', 
+        choices:[
+            new inquirer.Separator("Choose from Below"),'Installation','Usage','Credits','License',
+            new inquirer.Separator("Choose to Add more sections : "),"User Story","Acceptance Criteria",
+                                    "Links","Technologies Used","Screenshots",'Fearures','How to Contribute','Tests'], 
+
     },  
     {
-        //If user select Y for table and the choice installation is selected,
-        //only then this will be displayed else it is considered user doesnt want installation details in READ ME.
-        //Also if user select N for table ,skips creating table  the question still will be displayed  to enter the installation details 
-        //asuming user prefer it
+        //Only If user choose installation from the choice list  below question will be asked to the user
 
-        type:'input',
+        type:'editor',
         message:"Enter the installation details for the project?",
         name:'installation',
-        when:(answers=>{
-            return (answers.wantTableOfContent && answers.contentList[0]=='Installation')|| !answers.wantTableOfContent ?true:false;
-        })
+        when:(
+            answers=>answers.contentList.includes('Installation')
+             )
+    },
+    {
+        //Only If user choose usgae from the choice list  below question will be asked to the user
+
+        type:'editor',
+        message:"Enter the usage information for the project?",
+        name:'usage',
+        when:(
+                answers=>answers.contentList.includes('Usage')
+             )
+    },
+    {
+        //Only If user choose credits from the choice list  below question will be asked to the user
+
+        type:'editor',
+        message:"Enter the main features  of the project ?",
+        name:'features',
+        when:(
+            answers=>answers.contentList.includes('Credits')
+            )
+    },
+    {
+     
+        //Only if user choose license from the choice list below question will be asked to the user
+        type:'list',
+        message:"Enter your license info",
+        name:'license',
+        default:'UNLICENSE',
+        choices:['GNU','BSD','CC','BSD','MOZILLA','MIT','BOOST','APACHE','ECLIPSE','ISC','IBM','HIPOCRATIC','ZLIB','OPEN HARDWARE','UNLICENSE'],
+        when:(
+            answers=>answers.contentList.includes('License')
+            )
+    },
+    {
+        type:'editor',
+        message:"Enter the user story",
+        name:'userStory',
+         when:(
+            answers=>answers.contentList.includes('User Story')
+            )
+    },
+    {
+        type:'editor',
+        message:"Enter the acceptance criteria",
+        name:'acceptanceCriteria',
+         when:(
+            answers=>answers.contentList.includes('Acceptance Criteria')
+            ),
+     
     }
 
-]
-).then(data=>{
-    console.log(data);
-    console.log('# '+data.projectTitle);
 
-    console.log('## '+data.projectDescription);
+]
+).then(answers=>{
+
+    //Modify Project Title
+    let projectTitle="# "+ answers.projectTitle.toUpperCase();
+    fs.writeFile('README_TEMPLATE.md',projectTitle,(error)=>error ? console.log(error):console.log("Written Succesfully to READ ME"))
+
+    console.log(answers);
     
 }
 
-)
+).catch(error=>console.log(error))
 
 
 
