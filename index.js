@@ -153,7 +153,7 @@ prompt(
 
         type:'editor',
         message:"Enter the installation details for the project?",
-        name:'installation',
+        name:'Installation',
         when:(
             answers=>answers.contentList.includes('Installation')
              )
@@ -163,7 +163,7 @@ prompt(
 
         type:'editor',
         message:"Enter the usage information for the project?",
-        name:'usage',
+        name:'Usage',
         when:(
                 answers=>answers.contentList.includes('Usage')
              )
@@ -173,7 +173,7 @@ prompt(
 
         type:'editor',
         message:"Enter the main features  of the project ?",
-        name:'features',
+        name:'Credits',
         when:(
             answers=>answers.contentList.includes('Credits')
             )
@@ -183,7 +183,7 @@ prompt(
         //Only if user choose license from the choice list below question will be asked to the user
         type:'list',
         message:"Enter your license info",
-        name:'license',
+        name:'License',
         default:'UNLICENSE',
         choices:['GNU','BSD','CC','BSD','MOZILLA','MIT','BOOST','APACHE','ECLIPSE','ISC','IBM','HIPOCRATIC','ZLIB','OPEN HARDWARE','UNLICENSE'],
         when:(
@@ -193,7 +193,7 @@ prompt(
     {
         type:'editor',
         message:"Enter the user story",
-        name:'userStory',
+        name:'User Story',
          when:(
             answers=>answers.contentList.includes('User Story')
             )
@@ -201,21 +201,117 @@ prompt(
     {
         type:'editor',
         message:"Enter the acceptance criteria",
-        name:'acceptanceCriteria',
+        name:'Acceptance Criteria',
          when:(
             answers=>answers.contentList.includes('Acceptance Criteria')
             ),
      
-    }
-
+    },
+    {
+        type:'editor',
+        message:"Enter the Links for Github Repo /Live Application",
+        name:'Links',
+         when:(
+            answers=>answers.contentList.includes('Links')
+            ),
+     
+    },
+    {
+        type:'editor',
+        message:"Enter the Technologies used for the project",
+        name:'Technologies Used',
+         when:(
+            answers=>answers.contentList.includes('Technologies Used')
+            ),
+     
+    },
+    {
+        type:'editor',
+        message:"Enter the project related screenshots :",
+        name:'Screenshots',
+         when:(
+            answers=>answers.contentList.includes('Screenshots')
+            ),
+     
+    },
+    {
+        type:'editor',
+        message:"Specify the main features of this project",
+        name:'Features',
+         when:(
+            answers=>answers.contentList.includes('Features')
+            ),
+     
+    },
+    {
+        type:'editor',
+        message:"Specify how to contribute to the project",
+        name:'How to Contribute',
+         when:(
+            answers=>answers.contentList.includes('How to Contribute')
+            ),
+     
+    },
+    {
+        type:'editor',
+        message:"Enter the related test info for the project",
+        name:'Tests',
+         when:(
+            answers=>answers.contentList.includes('Tests')
+            ),
+     
+    }   
 
 ]
 ).then(answers=>{
 
-    //Modify Project Title
-    let projectTitle="# "+ answers.projectTitle.toUpperCase();
-    fs.writeFile('README_TEMPLATE.md',projectTitle,(error)=>error ? console.log(error):console.log("Written Succesfully to READ ME"))
+    let answerString="";
 
+    //Project Title
+    let projectTitle="# "+ answers.projectTitle.toUpperCase() +"\n";
+    answerString+=projectTitle;
+
+    //Project Description
+    let projectDescHeading="### "+"PROJECT DESCRIPTION  \n\n";
+    let projectDescription=projectDescHeading+answers.projectDescription.trim()+"\n";
+    answerString+=projectDescription+" \n";
+
+   
+    //Table Of Content
+    /* Created Table Of Content with the content list chosen by user */
+    if(answers.wantTableOfContent){
+
+        answerString+="#### "+"TABLE OF CONTENT \n";
+        let tableOfContent="<ol> \n";
+        for(let index=0;index<answers.contentList.length;index++){
+
+            tableOfContent+="<li>"+answers.contentList[index]+"</li> \n"
+        }
+        tableOfContent+="</ol> \n";
+        answerString+=tableOfContent;
+    }
+
+    //Iterate through all the content chosen by user and display the heading and its content
+   
+    answers.contentList.forEach(element => {
+
+        if(element==="License"){
+            answers[element]="![Badge License](https://img.shields.io/badge/License-GPL_3-blue.svg?style=for-the-badge)";
+        }
+        answerString+=`#### ${element.toUpperCase()} \n\n ${answers[element]} \n`
+
+    });
+
+
+
+
+    
+
+
+
+
+
+    fs.writeFile('README_TEMPLATE.md',answerString,(error)=>error ? console.log(error):console.log("Written Succesfully to READ ME"));
     console.log(answers);
     
 }
