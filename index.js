@@ -87,6 +87,7 @@ Validate ,description length not working with project description
 
 const inquirer=require('inquirer');
 const fs=require('fs');
+const { isBooleanObject } = require('util/types');
 
 //NOTE: Transformer just display the 
 
@@ -114,8 +115,8 @@ prompt(
         type:'input',
         message:"Enter the name of your project ?",
         name:'projectTitle',
-        validate:(answer)=>{
-            return !answer?"Please Enter a Project Title":true; 
+        validate:(answers)=>{
+            return !answers?"Please Enter a Project Title":true; 
         }
     },
     {
@@ -125,10 +126,7 @@ prompt(
         -Why did you build this project?
         -What problem does it solve?
         -What did you learn?`,
-        name:'projectDescription',
-        //Need to check/verify
-        //validate:(answer => answer.projectDescription.length==0?"Please enter the Project Description":true)
-
+        name:'projectDescription'
     },
     {
         type:'confirm',
@@ -144,13 +142,13 @@ prompt(
         default:'Screenshots', 
         choices:[
             new inquirer.Separator("Choose from Below"),'Installation','Usage','Credits','License',
-            new inquirer.Separator("Choose to Add more sections : "),"User Story","Acceptance Criteria",
-                                    "Links","Technologies Used","Screenshots",'Fearures','How to Contribute','Tests'], 
+            new inquirer.Separator("Choose to Add more sections : "),'Tests','Questions','How to Contribute'], 
 
     },  
     {
         //Only If user choose installation from the choice list  below question will be asked to the user
 
+        //TO DO
         type:'editor',
         message:"Enter the installation details for the project?",
         name:'Installation',
@@ -159,6 +157,7 @@ prompt(
              )
     },
     {
+        //TO DO
         //Only If user choose usgae from the choice list  below question will be asked to the user
 
         type:'editor',
@@ -169,10 +168,11 @@ prompt(
              )
     },
     {
+        //TO DO
         //Only If user choose credits from the choice list  below question will be asked to the user
 
         type:'editor',
-        message:"Enter the main features  of the project ?",
+        message:"Enter the credits ?",
         name:'Credits',
         when:(
             answers=>answers.contentList.includes('Credits')
@@ -185,65 +185,23 @@ prompt(
         message:"Enter your license info",
         name:'License',
         default:'UNLICENSE',
-        choices:['GNU','BSD','CC','BSD','MOZILLA','MIT','BOOST','APACHE','ECLIPSE','ISC','IBM','HIPOCRATIC','ZLIB','OPEN HARDWARE','UNLICENSE'],
+        choices:[
+                '{"GNU":"[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)"}',
+                '{"BSD":"[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)"}',
+                '{"MOZILLA":"[![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)"}',
+                '{"MIT":"[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)"}',
+                '{"APACHE":"[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)"}',
+                '{"ECLIPSE":"[![License](https://img.shields.io/badge/License-EPL%201.0-red.svg)](https://opensource.org/licenses/EPL-1.0)"}',
+                '{"IBM":"[![License: IPL 1.0](https://img.shields.io/badge/License-IPL%201.0-blue.svg)](https://opensource.org/licenses/IPL-1.0)"}',
+                '{"ZLIB":"[![License: Zlib](https://img.shields.io/badge/License-Zlib-lightgrey.svg)](https://opensource.org/licenses/Zlib)"}'
+                ],
         when:(
             answers=>answers.contentList.includes('License')
             )
     },
+   
     {
-        type:'editor',
-        message:"Enter the user story",
-        name:'User Story',
-         when:(
-            answers=>answers.contentList.includes('User Story')
-            )
-    },
-    {
-        type:'editor',
-        message:"Enter the acceptance criteria",
-        name:'Acceptance Criteria',
-         when:(
-            answers=>answers.contentList.includes('Acceptance Criteria')
-            ),
-     
-    },
-    {
-        type:'editor',
-        message:"Enter the Links for Github Repo /Live Application",
-        name:'Links',
-         when:(
-            answers=>answers.contentList.includes('Links')
-            ),
-     
-    },
-    {
-        type:'editor',
-        message:"Enter the Technologies used for the project",
-        name:'Technologies Used',
-         when:(
-            answers=>answers.contentList.includes('Technologies Used')
-            ),
-     
-    },
-    {
-        type:'editor',
-        message:"Enter the project related screenshots :",
-        name:'Screenshots',
-         when:(
-            answers=>answers.contentList.includes('Screenshots')
-            ),
-     
-    },
-    {
-        type:'editor',
-        message:"Specify the main features of this project",
-        name:'Features',
-         when:(
-            answers=>answers.contentList.includes('Features')
-            ),
-     
-    },
-    {
+        //TODO
         type:'editor',
         message:"Specify how to contribute to the project",
         name:'How to Contribute',
@@ -253,6 +211,7 @@ prompt(
      
     },
     {
+        //TO DO
         type:'editor',
         message:"Enter the related test info for the project",
         name:'Tests',
@@ -260,59 +219,100 @@ prompt(
             answers=>answers.contentList.includes('Tests')
             ),
      
+    } ,  
+    {
+        type:'input',
+        message:"Enter Github Username for sharing your github profile with users/contributors? ",
+        name:'Questions',
+         when:(
+            answers=>answers.contentList.includes('Questions')
+            ),
+         validate:(answer =>  answer.length===0?"Enter a valid Github Username ":true)   
+     
     }   
+
+    ,{
+        //Regex /^[a-zA-Z0-9]+@[a-z0-9.-]+\.[a-zA-Z]{2,3}$/ will validate for the email address,Verf=ify if teh email contains @,. and alphanumeric characters
+
+        type:'input',
+        message:"Enter the email address to contact you for further queries ",
+        name:'Extra Questions',
+        when:(
+            answers=>answers.contentList.includes('Questions')
+            ),
+        validate:(input)=>{
+                             return !input.match(/^[a-zA-Z0-9]+@[a-z0-9.-]+\.[a-zA-Z]{2,3}$/)?"Enter a valid email address":true;
+                          }
+
+    }
+
 
 ]
 ).then(answers=>{
 
-    let answerString="";
+
+    let answerString="\n";
 
     //Project Title
-    let projectTitle="# "+ answers.projectTitle.toUpperCase() +"\n";
-    answerString+=projectTitle;
+    let projectTitle=answers.projectTitle.toUpperCase() +"<br>"+"\n";
+
+    answerString=answerString+"# "+projectTitle;
 
     //Project Description
-    let projectDescHeading="### "+"PROJECT DESCRIPTION  \n\n";
-    let projectDescription=projectDescHeading+answers.projectDescription.trim()+"\n";
-    answerString+=projectDescription+" \n";
+    let projectDescHeading="### PROJECT DESCRIPTION"+"<br>"+"\n";
+    let projectDescription=projectDescHeading+answers.projectDescription.trim()+"<br><br>";
+    answerString+=projectDescription+"<br>"+"\n";
 
    
     //Table Of Content
     /* Created Table Of Content with the content list chosen by user */
     if(answers.wantTableOfContent){
 
-        answerString+="#### "+"TABLE OF CONTENT \n";
-        let tableOfContent="<ol> \n";
+        answerString+="#### TABLE OF CONTENT"+"<br>"+"\n";
+        let tableOfContent="\n";
         for(let index=0;index<answers.contentList.length;index++){
 
-            tableOfContent+="<li>"+answers.contentList[index]+"</li> \n"
+            // tableOfContent+="<li>"+answers.contentList[index]+"</li>"+"<br>"
+            tableOfContent+=`*  [${answers.contentList[index]}](#${answers.contentList[index].toLowerCase()})`+"\n"
         }
-        tableOfContent+="</ol> \n";
-        answerString+=tableOfContent;
+      
+        answerString+=tableOfContent+"<br><br>"+ "\n";
     }
 
     //Iterate through all the content chosen by user and display the heading and its content
-   
+    
+    let profileEmailString="";
     answers.contentList.forEach(element => {
 
+        console.log(element)
+        //Checks if the element is license if then add badge to top of readme
         if(element==="License"){
-            answers[element]="![Badge License](https://img.shields.io/badge/License-GPL_3-blue.svg?style=for-the-badge)";
+
+            let obj=JSON.parse(answers[element]);
+            for(licenseName in obj){
+                answerString=`${obj[licenseName]} `+"<br><br>"+answerString+"\n"+`<a name="${element.toLowerCase()}"></a>`+"\n"+"#### "+`${element.toUpperCase()} \n\n\n\n ${licenseName}`+"\n"+"<br><br>"+"\n"
+            }
+           
         }
-        answerString+=`#### ${element.toUpperCase()} \n\n ${answers[element]} \n`
+        else if(element==="Questions"){
+
+           
+            profileEmailString+=`<a name="${element.toLowerCase()}"></a>`+"\n"+"####  "+`${element.toUpperCase()}`+"\n"+"<br>"+"\n"+`GitHub profile :  [Github Profile](https://github.com/${answers[element]})`+"<br>"+"\n";
+            profileEmailString+=`Email : ${answers['Extra Questions']} `+"<br>"+"\n";
+            console.log(profileEmailString);
+            answerString+=profileEmailString;
+        }
+        else{
+
+            answerString+=`<a name="${element.toLowerCase()}"></a>`+"\n"+"####  "+`${element.toUpperCase()}`+` \n\n ${answers[element]} `+"<br><br>"+"\n"
+        }       
+        
 
     });
 
-
-
-
-    
-
-
-
-
-
-    fs.writeFile('README_TEMPLATE.md',answerString,(error)=>error ? console.log(error):console.log("Written Succesfully to READ ME"));
     console.log(answers);
+    fs.writeFile('README_TEMPLATE.md',answerString,(error)=>error ? console.log(error):console.log("Written Succesfully to READ ME"));
+    
     
 }
 
@@ -341,3 +341,10 @@ WHEN I enter my email address
 THEN this is added to the section of the README entitled Questions, with instructions on how to reach me with additional questions
 WHEN I click on the links in the Table of Contents
 THEN I am taken to the corresponding section of the README */
+
+// let obj={"GNU":"[![License GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)"};
+// for(key in obj){
+
+//     console.log(key);
+//     console.log(obj[key]);
+// }
