@@ -1,4 +1,4 @@
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) <br><br>
+[![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0) <br><br>
 # US WEATHER FORECAST DASHBOARD<br>
 ### PROJECT DESCRIPTION<br>
 This is US specific weather forecast dashboard as country code is not being usedin API call and even if the same city exist in multiple states ,only one from the search is picked
@@ -29,12 +29,12 @@ Install NPM packages
 npm install
 Enter your API in config.js
 const API_KEY = 'ENTER YOUR API';
+
  <br><br>
 <a name="usage"></a>
 ####  USAGE 
 
- LOREM IPSUM GENERATOR
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
  <br><br>
 <a name="credits"></a>
 ####  CREDITS 
@@ -48,12 +48,11 @@ Malven's Grid Cheatsheet
 Img Shields
 GitHub Pages
 Font Awesome
-
  <br><br>
 
 <a name="license"></a>
 #### LICENSE 
- Distributed under the MIT License. See LICENSE.txt for more information.
+ Distributed under the MOZILLA License. See LICENSE.txt for more information.
 <br><br>
 <a name="tests"></a>
 ####  TESTS 
@@ -74,7 +73,8 @@ Email : simmyvarghese5@gmail.com
 <br><a name="how-to-contribute"></a>
 ####  HOW TO CONTRIBUTE 
 
- Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
+ 
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
 
 If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement". Don't forget to give the project a star! Thanks again!
 
