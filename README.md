@@ -41,6 +41,9 @@ GIVEN a command-line application that accepts user input
 
 * Video Link : https://drive.google.com/file/d/1f-Ab23NZOV19xtl7QpJosccnbw1fAxZn/view
 
+* Github Repo Link : https://github.com/simmypayyappillyvarghese/automate-readme
+
+
 <br>
 
 ### Technologies/Packages Used
